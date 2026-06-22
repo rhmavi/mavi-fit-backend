@@ -1,3 +1,4 @@
+Seleciona todo o conteúdo com Ctrl+A, apaga tudo e cola o texto abaixo:
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,7 +14,7 @@ model Usuario {
   email      String    @unique
   senha      String
   aceiteLgpd Boolean   @default(false)
-  criadoEm  DateTime  @default(now())
+  criadoEm   DateTime  @default(now())
   admin      Boolean   @default(false)
 
   checkins   Checkin[]
@@ -29,7 +30,7 @@ model Competicao {
   premio       Float     @default(1200)
   linkCodigo   String    @unique
   ativa        Boolean   @default(true)
-  criadaEm    DateTime  @default(now())
+  criadaEm     DateTime  @default(now())
 
   checkins     Checkin[]
   tickets      Ticket[]
@@ -43,11 +44,11 @@ model Checkin {
   atividade        String
   duracaoMinutos   Int?
   legenda          String?
-  status           String    @default("pendente") // pendente | aprovado | reprovado
+  status           String    @default("pendente")
   motivoRejeicao   String?
   dataFoto         DateTime
-  criadoEm        DateTime  @default(now())
-  semanaReferencia String    // ex: "2026-W27"
+  criadoEm         DateTime  @default(now())
+  semanaReferencia String
 
   usuario          Usuario    @relation(fields:[usuarioId], references:[id])
   competicao       Competicao @relation(fields:[competicaoId], references:[id])
@@ -57,11 +58,11 @@ model Checkin {
 
 model Ticket {
   id               String    @id @default(cuid())
-  numero           Int       @unique // sequencial global — nunca se repete
+  numero           Int       @unique
   usuarioId        String
   competicaoId     String
   semanaReferencia String
-  geradoEm        DateTime  @default(now())
+  geradoEm         DateTime  @default(now())
 
   usuario          Usuario    @relation(fields:[usuarioId], references:[id])
   competicao       Competicao @relation(fields:[competicaoId], references:[id])
@@ -77,11 +78,11 @@ model Curtida {
 }
 
 model Comentario {
-  id        String   @id @default(cuid())
-  checkinId String
-  usuarioId String
+  id          String   @id @default(cuid())
+  checkinId   String
+  usuarioId   String
   nomeUsuario String
-  texto     String
-  criadoEm DateTime @default(now())
-  checkin   Checkin  @relation(fields:[checkinId], references:[id])
+  texto       String
+  criadoEm    DateTime @default(now())
+  checkin     Checkin  @relation(fields:[checkinId], references:[id])
 }
