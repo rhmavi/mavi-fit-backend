@@ -1,4 +1,3 @@
-Seleciona todo o conteúdo com Ctrl+A, apaga tudo e cola o texto abaixo:
 generator client {
   provider = "prisma-client-js"
 }
@@ -6,6 +5,7 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL")
 }
 
 model Usuario {
