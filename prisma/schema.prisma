@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id         String    @id @default(cuid())
+  nome       String
+  email      String    @unique
+  senha      String
+  aceiteLgpd Boolean   @default(false)
+  criadoEm  DateTime  @default(now())
+  admin      Boolean   @default(false)
+
+  checkins   Checkin[]
+  tickets    Ticket[]
+}
+
+model Competicao {
+  id           String    @id @default(cuid())
+  nome         String
+  descricao    String?
+  inicio       DateTime
+  fim          DateTime
+  premio       Float     @default(1200)
+  linkCodigo   String    @unique
+  ativa        Boolean   @default(true)
+  criadaEm    DateTime  @default(now())
+
+  checkins     Checkin[]
+  tickets      Ticket[]
+}
+
+model Checkin {
+  id               String    @id @default(cuid())
+  usuarioId        String
+  competicaoId     String
+  fotoUrl          String
+  atividade        String
+  duracaoMinutos   Int?
+  legenda          String?
+  status           String    @default("pendente") // pendente | aprovado | reprovado
+  motivoRejeicao   String?
+  dataFoto         DateTime
+  criadoEm        DateTime  @default(now())
+  semanaReferencia String    // ex: "2026-W27"
+
+  usuario          Usuario    @relation(fields:[usuarioId], references:[id])
+  competicao       Competicao @relation(fields:[competicaoId], references:[id])
+  curtidas         Curtida[]
+  comentarios      Comentario[]
+}
+
+model Ticket {
+  id               String    @id @default(cuid())
+  numero           Int       @unique // sequencial global — nunca se repete
+  usuarioId        String
+  competicaoId     String
+  semanaReferencia String
+  geradoEm        DateTime  @default(now())
+
+  usuario          Usuario    @relation(fields:[usuarioId], references:[id])
+  competicao       Competicao @relation(fields:[competicaoId], references:[id])
+}
+
+model Curtida {
+  id        String  @id @default(cuid())
+  checkinId String
+  usuarioId String
+  checkin   Checkin @relation(fields:[checkinId], references:[id])
+
+  @@unique([checkinId, usuarioId])
+}
+
+model Comentario {
+  id        String   @id @default(cuid())
+  checkinId String
+  usuarioId String
+  nomeUsuario String
+  texto     String
+  criadoEm DateTime @default(now())
+  checkin   Checkin  @relation(fields:[checkinId], references:[id])
+}
